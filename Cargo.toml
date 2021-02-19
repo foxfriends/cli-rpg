@@ -5,8 +5,10 @@ name = "rpg"
 version = "0.1.0"
 [dependencies]
 crossbeam-channel = "0.5"
+match-downcast = "0.1"
 pancurses = "0.16"
 paw = "1.0"
+typemap = "0.3"
 
 [dependencies.structopt]
 features = ["paw"]

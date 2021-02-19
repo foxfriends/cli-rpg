@@ -1,4 +1,6 @@
+use super::{event, Event, Events, Process};
 use crossbeam_channel::{Receiver, Sender, TryRecvError};
+use match_downcast::match_downcast;
 use pancurses::*;
 use rpg::{EngineCommand, GameState, UiCommand};
 use std::cell::RefCell;
@@ -61,7 +63,15 @@ impl Ui {
         *self.game_state.borrow_mut() = command.state();
     }
 
-    fn process(&self, _input: Input) {}
+    fn process(&self, input: Input) {
+        for event in self.ui_state.borrow_mut().process(input).into_iter() {
+            let any = event.to_any();
+            match_downcast!(any, {
+                x: event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
+                _ => {}
+            });
+        }
+    }
 
     fn repaint(&self) {}
 }

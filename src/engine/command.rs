@@ -1,1 +1,3 @@
-pub enum EngineCommand {}
+pub enum EngineCommand {
+    Stop,
+}
