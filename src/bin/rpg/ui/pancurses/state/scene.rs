@@ -1,8 +1,12 @@
-use super::{Events, MainMenu, Menu, Process};
+use super::{Event, Events, MainMenu, Menu, Process};
 use pancurses::Input;
 
+event!(pub(super) Goto(Scene));
+
+#[derive(Clone)]
 pub(super) enum Scene {
     MainMenu(Menu<MainMenu>),
+    Game,
 }
 
 impl Default for Scene {
@@ -16,6 +20,7 @@ impl Process for Scene {
         use Scene::*;
         match self {
             MainMenu(menu) => menu.process(input),
+            Game => vec![],
         }
     }
 }

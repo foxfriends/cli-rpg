@@ -1,7 +1,7 @@
 use super::{Event, Events, Process};
 use pancurses::Input;
 
-pub(super) trait MenuOptions {
+pub(super) trait MenuOptions: Clone {
     /// The number of options on this menu. Recommended to override this for performance reasons
     /// when possible.
     fn len(&self) -> usize {
@@ -19,7 +19,7 @@ pub(super) trait MenuOptions {
     fn cancel(&self) {}
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(super) struct Menu<T> {
     current_option: usize,
     options: T,

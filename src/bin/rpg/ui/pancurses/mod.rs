@@ -1,13 +1,16 @@
-use super::{event, Event, Events, Process};
 use crossbeam_channel::{Receiver, Sender, TryRecvError};
-use match_downcast::match_downcast;
 use pancurses::*;
 use rpg::{EngineCommand, GameState, UiCommand};
 use std::cell::RefCell;
 use std::time::{Duration, Instant};
 
+#[macro_use]
+mod event;
+mod process;
 mod state;
 
+use event::{Event, Events};
+use process::Process;
 use state::UiState;
 
 const FPS: u64 = 60;
@@ -65,10 +68,9 @@ impl Ui {
 
     fn process(&self, input: Input) {
         for event in self.ui_state.borrow_mut().process(input).into_iter() {
-            let any = event.to_any();
-            match_downcast!(any, {
-                x: event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
-                _ => {}
+            downcast!(event.as_any(), {
+                event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
+                else => (),
             });
         }
     }

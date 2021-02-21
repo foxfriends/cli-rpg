@@ -1,8 +1,10 @@
 use crossbeam_channel::unbounded;
+use rpg::Engine;
 use std::thread;
 use structopt::StructOpt;
 
-use rpg::Engine;
+#[macro_use]
+mod downcast;
 
 mod ui;
 

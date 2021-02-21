@@ -120,12 +120,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "match-downcast"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e16c54c7135c60d5cf6c089559a0d542cb29204b493cdff7978227688272b6a"
-
-[[package]]
 name = "ncurses"
 version = "5.100.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -239,7 +233,6 @@ name = "rpg"
 version = "0.1.0"
 dependencies = [
  "crossbeam-channel",
- "match-downcast",
  "pancurses",
  "paw",
  "structopt",
