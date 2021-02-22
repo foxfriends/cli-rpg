@@ -1,13 +1,13 @@
-use super::super::{event, Event};
-use super::{
-    menu::MenuOptions,
-    scene::{self, Scene},
-};
+use super::*;
 
 #[derive(Copy, Clone, Default)]
 pub struct MainMenu;
 
 impl MenuOptions for MainMenu {
+    fn title(&self) -> Option<String> {
+        Some(String::from("Simple RPG (working title)"))
+    }
+
     fn len(&self) -> usize {
         3
     }

@@ -6,17 +6,24 @@ use std::time::{Duration, Instant};
 
 #[macro_use]
 mod event;
+mod input;
+mod layout;
 mod process;
+mod render;
 mod state;
 
 use event::{Event, Events};
+use input::{Input, InputKind};
+use layout::Layout;
 use process::Process;
+use render::Render;
 use state::UiState;
 
 const FPS: u64 = 60;
 
 pub struct Ui {
     window: Window,
+    layout: Layout,
     ui_state: RefCell<UiState>,
     game_state: RefCell<GameState>,
     to_engine: Sender<EngineCommand>,
@@ -28,9 +35,10 @@ impl Ui {
         let window = initscr();
         window.nodelay(true);
         noecho();
-        nocbreak();
+        cbreak();
         curs_set(0);
         Self {
+            layout: Layout::debug(&window),
             window,
             ui_state: RefCell::default(),
             game_state: RefCell::default(),
@@ -44,6 +52,7 @@ impl Ui {
         loop {
             self.repaint();
             let next_frame = Instant::now() + frame_length;
+            let mut debug_erased = false;
             loop {
                 loop {
                     match self.from_engine.try_recv() {
@@ -52,7 +61,14 @@ impl Ui {
                         Err(TryRecvError::Disconnected) => return,
                     }
                 }
-                while let Some(input) = self.window.getch() {
+                for input in Input::read(&self.window) {
+                    if let Some(debug) = self.layout.get("debug") {
+                        if !debug_erased {
+                            debug.erase();
+                            debug_erased = true;
+                        }
+                        debug.addstr(format!("{:?} ", input));
+                    }
                     self.process(input);
                 }
                 if Instant::now() <= next_frame {
@@ -75,7 +91,17 @@ impl Ui {
         }
     }
 
-    fn repaint(&self) {}
+    fn repaint(&self) {
+        if let Some(debug) = self.layout.get("debug") {
+            debug.refresh();
+            debug.mv(0, 0);
+        }
+        if let Some(main) = self.layout.get("main") {
+            main.erase();
+            self.ui_state.borrow().render(&main);
+            main.refresh();
+        }
+    }
 }
 
 // TODO: Is this all we need to do to clean this up? What if there are many subwindows?

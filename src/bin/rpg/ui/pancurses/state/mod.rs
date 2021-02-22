@@ -1,12 +1,11 @@
-use super::{Event, Events, Process};
-use pancurses::Input;
+use super::*;
 
 mod main_menu;
 mod menu;
 mod scene;
 
 use main_menu::MainMenu;
-use menu::Menu;
+use menu::{Menu, MenuOptions};
 use scene::Scene;
 
 #[derive(Default)]
@@ -26,5 +25,11 @@ impl Process for UiState {
             });
         }
         events
+    }
+}
+
+impl Render for UiState {
+    fn render(&self, window: &Window) {
+        self.scene.render(window);
     }
 }

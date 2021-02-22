@@ -1,5 +1,4 @@
-use super::{Event, Events, MainMenu, Menu, Process};
-use pancurses::Input;
+use super::*;
 
 event!(pub(super) Goto(Scene));
 
@@ -21,6 +20,16 @@ impl Process for Scene {
         match self {
             MainMenu(menu) => menu.process(input),
             Game => vec![],
+        }
+    }
+}
+
+impl Render for Scene {
+    fn render(&self, window: &Window) {
+        use Scene::*;
+        match self {
+            MainMenu(menu) => menu.render(window),
+            _ => {} // TODO
         }
     }
 }
