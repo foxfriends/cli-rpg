@@ -86,7 +86,7 @@ impl Ui {
         for event in self.ui_state.borrow_mut().process(input).into_iter() {
             downcast!(event.as_any(), {
                 event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
-                else => (),
+                else => {}
             });
         }
     }
