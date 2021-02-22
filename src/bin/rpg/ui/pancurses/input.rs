@@ -119,6 +119,7 @@ impl Input {
                         _ => Unknown,
                     }
                 }
+                ['\u{1b}', '\u{1b}', ..] => Esc,
                 ['\u{1b}', ch, ..] => {
                     len = 2;
                     alt = true;
