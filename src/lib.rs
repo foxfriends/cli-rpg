@@ -1,3 +1,4 @@
+mod components;
 mod engine;
 mod state;
 mod ui;
