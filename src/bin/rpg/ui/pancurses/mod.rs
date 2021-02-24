@@ -19,7 +19,7 @@ use process::Process;
 use render::Render;
 use state::UiState;
 
-const FPS: u64 = 60;
+const FPS: u64 = 30;
 
 pub struct Ui {
     window: Window,
