@@ -52,7 +52,6 @@ impl Engine {
         use EngineCommand::*;
         match command {
             Stop => unreachable!("should have been handled already"),
-            Control(_control) => todo!("implement interactive user input interface"),
             Command(_command) => todo!("implement textual command based interface"),
         }
     }

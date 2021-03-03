@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) trait MenuOptions: Clone {
+pub(in crate::ui::pancurses) trait MenuOptions: Clone {
     /// The number of options on this menu. Recommended to override this for performance reasons
     /// when possible.
     fn len(&self) -> usize {
@@ -24,7 +24,7 @@ pub(super) trait MenuOptions: Clone {
 }
 
 #[derive(Clone, Default)]
-pub(super) struct Menu<T> {
+pub(in crate::ui::pancurses) struct Menu<T> {
     current_option: usize,
     options: T,
 }
@@ -45,7 +45,7 @@ where
     }
 }
 
-impl<T> Process for Menu<T>
+impl<T> Process<Input> for Menu<T>
 where
     T: MenuOptions,
 {

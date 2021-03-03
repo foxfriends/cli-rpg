@@ -3,9 +3,9 @@ use super::*;
 event!(pub(super) Goto(Scene));
 
 #[derive(Clone)]
-pub(super) enum Scene {
+pub(in crate::ui::pancurses) enum Scene {
     MainMenu(Menu<MainMenu>),
-    Game,
+    Game(Game),
 }
 
 impl Default for Scene {
@@ -14,12 +14,23 @@ impl Default for Scene {
     }
 }
 
-impl Process for Scene {
+impl Process<Input> for Scene {
     fn process(&mut self, input: Input) -> Events {
         use Scene::*;
+
         match self {
             MainMenu(menu) => menu.process(input),
-            Game => vec![],
+            Game(game) => game.process(input),
+        }
+    }
+}
+
+impl Process<UiCommand> for Scene {
+    fn process(&mut self, command: UiCommand) -> Events {
+        use Scene::*;
+        match self {
+            Game(game) => game.process(command),
+            MainMenu(..) => vec![],
         }
     }
 }
@@ -27,6 +38,7 @@ impl Process for Scene {
 impl Render for Scene {
     fn render(&self, window: &Window) {
         use Scene::*;
+
         match self {
             MainMenu(menu) => menu.render(window),
             _ => {} // TODO

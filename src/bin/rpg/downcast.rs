@@ -1,6 +1,7 @@
 #[macro_export]
 macro_rules! __downcast {
     ($any:ident, else => $end:expr $(,)?) => {
+        #[allow(unreachable_code)]
         break $end
     };
     ($any:ident, $name:ident : $t:ty => $eval:expr, $($rest:tt)+) => {{

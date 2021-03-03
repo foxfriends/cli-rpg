@@ -1,35 +1,54 @@
 use super::*;
 
+mod game;
 mod main_menu;
 mod menu;
 mod scene;
 
+use game::Game;
 use main_menu::MainMenu;
 use menu::{Menu, MenuOptions};
 use scene::Scene;
 
-#[derive(Default)]
 pub struct UiState {
-    scene: Scene,
+    scenes: Vec<Scene>,
 }
 
-impl Process for UiState {
-    fn process(&mut self, input: Input) -> Events {
-        let mut events = vec![];
-        for event in self.scene.process(input).into_iter() {
-            downcast!(event.as_any(), {
-                scene::Goto(scene) => {
-                    self.scene = scene.clone();
-                },
-                else => events.push(event)
-            });
+impl Default for UiState {
+    fn default() -> Self {
+        Self {
+            scenes: vec![Scene::default()],
         }
-        events
+    }
+}
+
+impl<InputEvent> Process<InputEvent> for UiState
+where
+    Scene: Process<InputEvent>,
+{
+    fn process(&mut self, input: InputEvent) -> Events {
+        self.scenes.last_mut().unwrap().process(input)
+    }
+}
+
+impl EventHandler for UiState {
+    fn handle(&mut self, event: Box<dyn Event>) -> Events {
+        downcast!(event.as_any(), {
+            scene::Goto(scene) => {
+                self.scenes = vec![scene.clone()];
+            },
+            else => { return vec![event] }
+        });
+        vec![]
     }
 }
 
 impl Render for UiState {
     fn render(&self, window: &Window) {
-        self.scene.render(window);
+        // TODO: is there a more efficient way to do this?
+        // maybe reverse render without overwrite until flip?
+        for scene in &self.scenes {
+            scene.render(window);
+        }
     }
 }

@@ -1,7 +1,7 @@
 use super::*;
 
 #[derive(Copy, Clone, Default)]
-pub struct MainMenu;
+pub(in crate::ui::pancurses) struct MainMenu;
 
 impl MenuOptions for MainMenu {
     fn title(&self) -> Option<String> {
@@ -22,8 +22,9 @@ impl MenuOptions for MainMenu {
 
     fn select(&self, option: usize) -> Box<dyn Event> {
         match option {
-            0 => Box::new(scene::Goto(Scene::Game)),
-            1 => Box::new(scene::Goto(Scene::Game)),
+            0 => Box::new(scene::Goto(Scene::Game(Game::default()))),
+            // TODO: load the game instead of default it
+            1 => Box::new(scene::Goto(Scene::Game(Game::default()))),
             2 => Box::new(event::Quit),
             _ => unreachable!(),
         }

@@ -1,6 +1,6 @@
 use crossbeam_channel::{Receiver, Sender, TryRecvError};
 use pancurses::*;
-use rpg::{EngineCommand, GameState, UiCommand};
+use rpg::{EngineCommand, UiCommand};
 use std::cell::RefCell;
 use std::time::{Duration, Instant};
 
@@ -12,7 +12,7 @@ mod process;
 mod render;
 mod state;
 
-use event::{Event, Events};
+use event::{Event, EventHandler, Events};
 use input::{Input, InputKind};
 use layout::Layout;
 use process::Process;
@@ -25,7 +25,6 @@ pub struct Ui {
     window: Window,
     layout: Layout,
     ui_state: RefCell<UiState>,
-    game_state: RefCell<GameState>,
     to_engine: Sender<EngineCommand>,
     from_engine: Receiver<UiCommand>,
 }
@@ -41,7 +40,6 @@ impl Ui {
             layout: Layout::debug(&window),
             window,
             ui_state: RefCell::default(),
-            game_state: RefCell::default(),
             to_engine,
             from_engine,
         }
@@ -56,7 +54,7 @@ impl Ui {
             loop {
                 loop {
                     match self.from_engine.try_recv() {
-                        Ok(command) => self.handle(command),
+                        Ok(command) => self.process_and_handle(command),
                         Err(TryRecvError::Empty) => break,
                         Err(TryRecvError::Disconnected) => return,
                     }
@@ -69,7 +67,7 @@ impl Ui {
                         }
                         debug.addstr(format!("{:?} ", input));
                     }
-                    self.process(input);
+                    self.process_and_handle(input);
                 }
                 if Instant::now() <= next_frame {
                     break;
@@ -78,14 +76,19 @@ impl Ui {
         }
     }
 
-    fn handle(&self, command: UiCommand) {
-        *self.game_state.borrow_mut() = command.state();
-    }
-
-    fn process(&self, input: Input) {
-        for event in self.ui_state.borrow_mut().process(input).into_iter() {
+    fn process_and_handle<InputEvent>(&self, input: InputEvent)
+    where
+        UiState: Process<InputEvent>,
+    {
+        for event in self
+            .ui_state
+            .borrow_mut()
+            .process_and_handle(input)
+            .into_iter()
+        {
             downcast!(event.as_any(), {
                 event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
+                &event::Command(cmd) => self.to_engine.send(EngineCommand::Command(cmd.to_owned())).unwrap(),
                 else => {}
             });
         }
