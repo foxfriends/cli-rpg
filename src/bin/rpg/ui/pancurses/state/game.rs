@@ -12,10 +12,10 @@ impl Process<Input> for Game {
         let mut events: Events = vec![];
         match input.kind {
             // TODO: commands probably should not be random strings, can I make a factory?
-            Down | Character('s') | Character('j') => events.push(Box::new(event::Command("move south"))),
-            Up | Character('w') | Character('k') => events.push(Box::new(event::Command("move north"))),
-            Right | Character('d') | Character('l') => events.push(Box::new(event::Command("move east"))),
-            Left | Character('a') | Character('h') => events.push(Box::new(event::Command("move west"))),
+            Down | Character('s') | Character('j') => events.push(Box::new(event::Command(EngineCommand::MoveSouth))),
+            Up | Character('w') | Character('k') => events.push(Box::new(event::Command(EngineCommand::MoveNorth))),
+            Right | Character('d') | Character('l') => events.push(Box::new(event::Command(EngineCommand::MoveEast))),
+            Left | Character('a') | Character('h') => events.push(Box::new(event::Command(EngineCommand::MoveWest))),
             _ => {}
         }
         events

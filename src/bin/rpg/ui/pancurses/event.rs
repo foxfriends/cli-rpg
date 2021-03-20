@@ -1,3 +1,4 @@
+use rpg::EngineCommand;
 use std::any::Any;
 
 pub(super) trait Event: Any {
@@ -43,4 +44,4 @@ macro_rules! event {
 pub(super) type Events = Vec<Box<dyn Event>>;
 
 event!(pub(super) Quit);
-event!(pub(super) Command(&'static str));
+event!(pub(super) Command(EngineCommand));

@@ -6,6 +6,7 @@ use std::time::{Duration, Instant};
 
 mod command;
 
+use super::systems::*;
 pub use command::EngineCommand;
 
 const FPS: u64 = 30;
@@ -32,27 +33,38 @@ impl Engine {
     pub fn run(mut self) {
         let frame_length = Duration::from_millis(1000 / FPS);
 
-        let mut schedule = Schedule::builder().build();
+        let mut handle_move_north = Schedule::builder()
+            .add_system(acceleration_system(0, -1))
+            .build();
+        let mut handle_move_east = Schedule::builder()
+            .add_system(acceleration_system(1, 0))
+            .build();
+        let mut handle_move_south = Schedule::builder()
+            .add_system(acceleration_system(0, 1))
+            .build();
+        let mut handle_move_west = Schedule::builder()
+            .add_system(acceleration_system(-1, 0))
+            .build();
+        let mut step = Schedule::builder().add_system(movement_system()).build();
 
         'outer: loop {
             let next_frame = Instant::now() + frame_length;
             loop {
                 match self.from_ui.recv_deadline(next_frame) {
                     Ok(EngineCommand::Stop) => break 'outer,
-                    Ok(command) => self.handle(command),
+                    Ok(EngineCommand::MoveNorth) => self.execute(&mut handle_move_north),
+                    Ok(EngineCommand::MoveEast) => self.execute(&mut handle_move_east),
+                    Ok(EngineCommand::MoveSouth) => self.execute(&mut handle_move_south),
+                    Ok(EngineCommand::MoveWest) => self.execute(&mut handle_move_west),
                     Err(RecvTimeoutError::Timeout) => break,
                     Err(RecvTimeoutError::Disconnected) => break 'outer,
                 }
             }
-            schedule.execute(&mut self.world, &mut self.resources);
+            self.execute(&mut step);
         }
     }
 
-    fn handle(&self, command: EngineCommand) {
-        use EngineCommand::*;
-        match command {
-            Stop => unreachable!("should have been handled already"),
-            Command(_command) => todo!("implement textual command based interface"),
-        }
+    fn execute(&mut self, schedule: &mut Schedule) {
+        schedule.execute(&mut self.world, &mut self.resources);
     }
 }
