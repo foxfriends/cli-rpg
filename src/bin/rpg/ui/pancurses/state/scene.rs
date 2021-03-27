@@ -1,4 +1,5 @@
 use super::*;
+use rpg::{Render, Renderer};
 
 event!(pub(super) Goto(Scene));
 
@@ -36,11 +37,11 @@ impl Process<UiCommand> for Scene {
 }
 
 impl Render for Scene {
-    fn render(&self, window: &Window) {
+    fn render(&self, renderer: &mut dyn Renderer) {
         use Scene::*;
 
         match self {
-            MainMenu(menu) => menu.render(window),
+            MainMenu(menu) => menu.render(renderer),
             _ => {} // TODO
         }
     }

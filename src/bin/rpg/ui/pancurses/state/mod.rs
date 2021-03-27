@@ -1,4 +1,5 @@
 use super::*;
+use rpg::{Render, Renderer};
 
 mod game;
 mod main_menu;
@@ -44,11 +45,11 @@ impl EventHandler for UiState {
 }
 
 impl Render for UiState {
-    fn render(&self, window: &Window) {
+    fn render(&self, renderer: &mut dyn Renderer) {
         // TODO: is there a more efficient way to do this?
         // maybe reverse render without overwrite until flip?
         for scene in &self.scenes {
-            scene.render(window);
+            scene.render(renderer);
         }
     }
 }

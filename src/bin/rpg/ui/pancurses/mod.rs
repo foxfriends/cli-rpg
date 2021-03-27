@@ -1,6 +1,6 @@
 use crossbeam_channel::{Receiver, Sender, TryRecvError};
 use pancurses::*;
-use rpg::{EngineCommand, UiCommand};
+use rpg::{EngineCommand, Render, UiCommand};
 use std::cell::RefCell;
 use std::time::{Duration, Instant};
 
@@ -9,15 +9,15 @@ mod event;
 mod input;
 mod layout;
 mod process;
-mod render;
 mod state;
+mod window_renderer;
 
 use event::{Event, EventHandler, Events};
 use input::{Input, InputKind};
 use layout::Layout;
 use process::Process;
-use render::Render;
 use state::UiState;
+use window_renderer::WindowRenderer;
 
 const FPS: u64 = 30;
 
@@ -101,7 +101,7 @@ impl Ui {
         }
         if let Some(main) = self.layout.get("main") {
             main.erase();
-            self.ui_state.borrow().render(&main);
+            self.ui_state.borrow().render(&mut WindowRenderer(main));
             main.refresh();
         }
     }
