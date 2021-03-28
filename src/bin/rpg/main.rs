@@ -32,6 +32,7 @@ struct Args {
 
 #[paw::main]
 fn main(args: Args) {
+    pretty_env_logger::init();
     println!("{:?}", args);
 
     let (to_engine, from_ui) = unbounded();

@@ -76,11 +76,11 @@ where
             return;
         }
 
-        let y = (h - options.len() as i32) / 2;
+        let y = (h - options.len() as i64) / 2;
 
         if let Some(title) = self.options.title() {
             let l = title.len();
-            let x = (w - l as i32) / 2;
+            let x = (w - l as i64) / 2;
             renderer.mv(x, y);
             renderer.render_str_ln(title.as_str());
             renderer.render_str_ln("-".repeat(l).as_str());
@@ -90,7 +90,7 @@ where
             if i == self.current_option {
                 option = format!("-> {} <-", option);
             }
-            let l = option.len() as i32;
+            let l = option.len() as i64;
             let x = (w - l) / 2;
             renderer.mv_x(x);
             renderer.render_str_ln(option.as_str());

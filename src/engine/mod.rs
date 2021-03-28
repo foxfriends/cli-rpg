@@ -1,7 +1,6 @@
 use crate::{GameState, UiCommand};
 use crossbeam_channel::{Receiver, RecvTimeoutError, Sender};
 use legion::{Resources, Schedule, World};
-use std::cell::RefCell;
 use std::time::{Duration, Instant};
 
 mod command;
@@ -12,7 +11,6 @@ pub use command::EngineCommand;
 const FPS: u64 = 30;
 
 pub struct Engine {
-    game_state: RefCell<GameState>,
     world: World,
     resources: Resources,
     from_ui: Receiver<EngineCommand>,
@@ -21,10 +19,11 @@ pub struct Engine {
 
 impl Engine {
     pub fn new(from_ui: Receiver<EngineCommand>, to_ui: Sender<UiCommand>) -> Self {
+        let mut resources = Resources::default();
+        resources.insert(GameState::default());
         Self {
-            game_state: RefCell::default(),
             world: World::default(),
-            resources: Resources::default(),
+            resources,
             from_ui,
             to_ui,
         }
@@ -45,7 +44,10 @@ impl Engine {
         let mut handle_move_west = Schedule::builder()
             .add_system(acceleration_system(-1, 0))
             .build();
-        let mut step = Schedule::builder().add_system(movement_system()).build();
+        let mut step = Schedule::builder()
+            .add_system(movement_system())
+            .add_system(serialize_system())
+            .build();
 
         'outer: loop {
             let next_frame = Instant::now() + frame_length;

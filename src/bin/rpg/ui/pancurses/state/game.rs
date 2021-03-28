@@ -1,5 +1,5 @@
 use super::*;
-use rpg::GameState;
+use rpg::{GameState, Render, Renderer};
 
 #[derive(Clone, Default, Debug)]
 pub struct Game(GameState);
@@ -26,5 +26,10 @@ impl Process<UiCommand> for Game {
     fn process(&mut self, input: UiCommand) -> Events {
         self.0 = input.state();
         vec![]
+    }
+}
+
+impl Render for Game {
+    fn render(&self, renderer: &mut dyn Renderer) {
     }
 }

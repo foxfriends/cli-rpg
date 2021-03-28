@@ -1,9 +1,9 @@
 pub trait Renderer {
-    fn size(&self) -> (i32, i32);
+    fn size(&self) -> (i64, i64);
 
-    fn mv(&mut self, x: i32, y: i32);
-    fn mv_x(&mut self, x: i32);
-    fn mv_y(&mut self, y: i32);
+    fn mv(&mut self, x: i64, y: i64);
+    fn mv_x(&mut self, x: i64);
+    fn mv_y(&mut self, y: i64);
 
     fn render_str(&mut self, line: &str);
 
