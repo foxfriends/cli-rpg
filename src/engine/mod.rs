@@ -73,12 +73,10 @@ impl Engine {
     }
 
     fn load_game(&mut self, save_file: Option<PathBuf>) {
-        if save_file.is_some() {
-            todo!("loading games is not supported");
-        }
-        self.resources.insert(GameState::default());
-        self.to_ui
-            .send(UiCommand::Load(GameState::default()))
-            .unwrap();
+        let state = save_file
+            .and_then(|file| GameState::load(file).ok())
+            .unwrap_or_else(GameState::default);
+        self.resources.insert(state.clone());
+        self.to_ui.send(UiCommand::Load(state)).unwrap();
     }
 }
