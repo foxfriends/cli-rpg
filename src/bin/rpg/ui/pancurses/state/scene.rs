@@ -27,12 +27,8 @@ impl Process<Input> for Scene {
 }
 
 impl Process<UiCommand> for Scene {
-    fn process(&mut self, command: UiCommand) -> Events {
-        use Scene::*;
-        match self {
-            Game(game) => game.process(command),
-            MainMenu(..) => vec![],
-        }
+    fn process(&mut self, _: UiCommand) -> Events {
+        vec![]
     }
 }
 

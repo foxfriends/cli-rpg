@@ -88,7 +88,7 @@ impl Ui {
         {
             downcast!(event.as_any(), {
                 event::Quit => self.to_engine.send(EngineCommand::Stop).unwrap(),
-                event::Command(cmd) => self.to_engine.send(*cmd).unwrap(),
+                event::Command(cmd) => self.to_engine.send(cmd.clone()).unwrap(),
                 else => {}
             });
         }

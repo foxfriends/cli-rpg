@@ -23,12 +23,21 @@ impl Default for UiState {
     }
 }
 
-impl<InputEvent> Process<InputEvent> for UiState
-where
-    Scene: Process<InputEvent>,
-{
-    fn process(&mut self, input: InputEvent) -> Events {
+impl Process<Input> for UiState {
+    fn process(&mut self, input: Input) -> Events {
         self.scenes.last_mut().unwrap().process(input)
+    }
+}
+
+impl Process<UiCommand> for UiState {
+    fn process(&mut self, command: UiCommand) -> Events {
+        let mut events: Events = vec![];
+        match command {
+            UiCommand::Load(state) => {
+                events.push(Box::new(scene::Goto(Scene::Game(Game::from(state)))));
+            }
+        }
+        events
     }
 }
 

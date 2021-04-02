@@ -22,9 +22,9 @@ impl MenuOptions for MainMenu {
 
     fn select(&self, option: usize) -> Box<dyn Event> {
         match option {
-            0 => Box::new(scene::Goto(Scene::Game(Game::default()))),
-            // TODO: load the game instead of default it
-            1 => Box::new(scene::Goto(Scene::Game(Game::default()))),
+            0 => Box::new(event::Command(EngineCommand::Load(None))),
+            // TODO: load the game instead of starting a new one
+            1 => Box::new(event::Command(EngineCommand::Load(None))),
             2 => Box::new(event::Quit),
             _ => unreachable!(),
         }

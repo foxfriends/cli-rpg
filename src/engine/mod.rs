@@ -1,6 +1,7 @@
 use crate::{GameState, UiCommand};
 use crossbeam_channel::{Receiver, RecvTimeoutError, Sender};
 use legion::{Resources, Schedule, World};
+use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 mod command;
@@ -58,6 +59,7 @@ impl Engine {
                     Ok(EngineCommand::MoveEast) => self.execute(&mut handle_move_east),
                     Ok(EngineCommand::MoveSouth) => self.execute(&mut handle_move_south),
                     Ok(EngineCommand::MoveWest) => self.execute(&mut handle_move_west),
+                    Ok(EngineCommand::Load(save_file)) => self.load_game(save_file),
                     Err(RecvTimeoutError::Timeout) => break,
                     Err(RecvTimeoutError::Disconnected) => break 'outer,
                 }
@@ -68,5 +70,15 @@ impl Engine {
 
     fn execute(&mut self, schedule: &mut Schedule) {
         schedule.execute(&mut self.world, &mut self.resources);
+    }
+
+    fn load_game(&mut self, save_file: Option<PathBuf>) {
+        if save_file.is_some() {
+            todo!("loading games is not supported");
+        }
+        self.resources.insert(GameState::default());
+        self.to_ui
+            .send(UiCommand::Load(GameState::default()))
+            .unwrap();
     }
 }
