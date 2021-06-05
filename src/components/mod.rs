@@ -1,3 +1,4 @@
+mod archetype_id;
 mod controllable;
 mod description;
 mod name;
@@ -6,6 +7,7 @@ mod size;
 mod sprite;
 mod velocity;
 
+pub use archetype_id::ArchetypeId;
 pub use controllable::Controllable;
 pub use description::Description;
 pub use name::Name;

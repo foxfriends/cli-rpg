@@ -1,3 +1,4 @@
+mod archetypes;
 mod components;
 mod engine;
 mod state;
