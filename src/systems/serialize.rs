@@ -5,6 +5,7 @@ use legion::{maybe_changed, Entity, IntoQuery};
 use std::collections::HashSet;
 
 #[system]
+#[read_component(ArchetypeId)]
 #[read_component(Entity)]
 #[read_component(Position)]
 #[read_component(Sprite)]
