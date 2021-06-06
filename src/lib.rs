@@ -1,6 +1,7 @@
 mod archetypes;
 mod components;
 mod engine;
+mod game;
 mod state;
 mod systems;
 mod ui;

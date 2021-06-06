@@ -36,6 +36,11 @@ impl Process<UiCommand> for UiState {
             UiCommand::Load(state) => {
                 events.push(Box::new(scene::Goto(Scene::Game(Game::from(state)))));
             }
+            _ => {
+                if let Some(scene) = self.scenes.first_mut() {
+                    events.extend(scene.process(command));
+                }
+            }
         }
         events
     }

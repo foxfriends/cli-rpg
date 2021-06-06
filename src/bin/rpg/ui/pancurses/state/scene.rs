@@ -27,8 +27,13 @@ impl Process<Input> for Scene {
 }
 
 impl Process<UiCommand> for Scene {
-    fn process(&mut self, _: UiCommand) -> Events {
-        vec![]
+    fn process(&mut self, command: UiCommand) -> Events {
+        use Scene::*;
+
+        match self {
+            Game(game) => game.process(command),
+            _ => vec![],
+        }
     }
 }
 
@@ -38,7 +43,7 @@ impl Render for Scene {
 
         match self {
             MainMenu(menu) => menu.render(renderer),
-            _ => {} // TODO
+            Game(game) => game.render(renderer),
         }
     }
 }

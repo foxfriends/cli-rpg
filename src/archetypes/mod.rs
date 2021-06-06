@@ -1,6 +1,6 @@
 use legion::World;
 
-trait Archetype<T> {
+pub(crate) trait Archetype<T> {
     const ID: &'static str;
 
     fn new(world: &mut World, data: T);

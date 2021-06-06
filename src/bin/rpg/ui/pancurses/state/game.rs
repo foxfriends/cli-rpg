@@ -27,6 +27,22 @@ impl Process<Input> for Game {
     }
 }
 
+impl Process<UiCommand> for Game {
+    fn process(&mut self, command: UiCommand) -> Events {
+        match command {
+            UiCommand::Update(state) => self.0 = state,
+            _ => {}
+        }
+        vec![]
+    }
+}
+
 impl Render for Game {
-    fn render(&self, renderer: &mut dyn Renderer) {}
+    fn render(&self, renderer: &mut dyn Renderer) {
+        let state = &self.0;
+
+        for entity in state.entities().values() {
+            entity.render(renderer);
+        }
+    }
 }

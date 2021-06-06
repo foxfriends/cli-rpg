@@ -1,3 +1,4 @@
+use crate::game::new_game;
 use crate::{GameState, UiCommand};
 use crossbeam_channel::{Receiver, RecvTimeoutError, Sender};
 use legion::{Resources, Schedule, World};
@@ -65,6 +66,8 @@ impl Engine {
                 }
             }
             self.execute(&mut step);
+            let state = self.resources.get::<GameState>().unwrap();
+            self.to_ui.send(UiCommand::Update(state.clone())).ok();
         }
     }
 
@@ -73,10 +76,17 @@ impl Engine {
     }
 
     fn load_game(&mut self, save_file: Option<PathBuf>) {
-        let state = save_file
-            .and_then(|file| GameState::load(file).ok())
-            .unwrap_or_else(GameState::default);
-        self.resources.insert(state.clone());
-        self.to_ui.send(UiCommand::Load(state)).unwrap();
+        if let Some(_save_file) = save_file {
+            todo!("Load save file");
+        } else {
+            new_game(&mut self.world);
+        }
+        self.resources.insert(GameState::default());
+        Schedule::builder()
+            .add_system(serialize_system())
+            .build()
+            .execute(&mut self.world, &mut self.resources);
+        let state = self.resources.get::<GameState>().unwrap();
+        self.to_ui.send(UiCommand::Load(state.clone())).unwrap();
     }
 }
